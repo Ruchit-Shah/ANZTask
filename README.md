@@ -66,7 +66,6 @@ Cmd + U
 - Swift 5+
 - Xcode 15+
 - iOS 15+
-
  
 ## 📄 License
 
