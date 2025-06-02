@@ -9,6 +9,18 @@ import SwiftUI
 
 struct UserListView: View {
     @StateObject var viewModel: UserListViewModel
+    @State private var searchText = ""
+
+    var filteredUsers: [User] {
+        if searchText.isEmpty {
+            return viewModel.users
+        } else {
+            return viewModel.users.filter { user in
+                user.name.lowercased().contains(searchText.lowercased()) ||
+                user.email.lowercased().contains(searchText.lowercased())
+            }
+        }
+    }
 
     var body: some View {
         NavigationView {
@@ -19,7 +31,7 @@ struct UserListView: View {
                     Text("Error: \(error)")
                         .foregroundColor(.red)
                 } else {
-                    List(viewModel.users) { user in
+                    List(filteredUsers) { user in
                         NavigationLink(destination: UserDetailView(user: user)) {
                             VStack(alignment: .leading) {
                                 Text(user.name)
@@ -33,6 +45,7 @@ struct UserListView: View {
                 }
             }
             .navigationTitle("Users")
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic))
             .task {
                 await viewModel.fetchUsers()
             }
